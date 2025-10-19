@@ -283,7 +283,7 @@ const Dashboard: React.FC = () => {
               <Paper
                 sx={{
                   p: 4,
-                  borderRadius: 4,
+                  borderRadius: 2,
                   backgroundColor: mode === 'light' ? '#e8f4f8' : '#2d3436',
                   minHeight: 350,
                   boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
@@ -333,7 +333,7 @@ const Dashboard: React.FC = () => {
 
             {/* Monthly Temperature Chart */}
             <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3, borderRadius: 4, minHeight: 350, backgroundColor: mode === 'light' ? '#fff' : '#2d2d2d', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+              <Paper sx={{ p: 3, borderRadius: 2, minHeight: 350, backgroundColor: mode === 'light' ? '#fff' : '#2d2d2d', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
                 <Typography variant="h6" fontWeight={600} gutterBottom sx={{ color: mode === 'light' ? '#1a237e' : '#fff' }}>
                   Average Monthly Temperature
                 </Typography>
@@ -371,7 +371,7 @@ const Dashboard: React.FC = () => {
 
             {/* 2 Weeks Forecast */}
             <Grid item xs={12}>
-              <Paper sx={{ p: 3, borderRadius: 4, backgroundColor: mode === 'light' ? '#e8f4f8' : '#2d2d2d', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+              <Paper sx={{ p: 3, borderRadius: 2, backgroundColor: mode === 'light' ? '#e8f4f8' : '#2d2d2d', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
                 <Typography variant="h6" fontWeight={600} gutterBottom sx={{ mb: 3, color: mode === 'light' ? '#1a237e' : '#fff' }}>
                   2 weeks Forecast
                 </Typography>
@@ -384,7 +384,7 @@ const Dashboard: React.FC = () => {
                           p: 2.5,
                           textAlign: 'center',
                           backgroundColor: mode === 'light' ? '#d4e9f2' : '#1a1a2e',
-                          borderRadius: 4,
+                          borderRadius: 2,
                           transition: 'transform 0.2s',
                           '&:hover': {
                             transform: 'translateY(-4px)',
@@ -425,7 +425,7 @@ const Dashboard: React.FC = () => {
         }}
       >
         <Container maxWidth="xl">
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'inherit', gap: 2 }}>
             <Typography variant="body2" color="text.secondary">
               All rights of this site are reserved for Nadin Sadr Aria Engineering Company.
             </Typography>
