@@ -353,7 +353,7 @@ const Dashboard: React.FC = () => {
                     <Tooltip 
                       contentStyle={{ 
                         backgroundColor: mode === 'light' ? '#fff' : '#333',
-                        border: `1px solid ${mode === 'light' ? '#e0e0e0' : '#555'}`,
+                        border: `none ${mode === 'light' ? '#e0e0e0' : '#555'}`,
                         color: mode === 'light' ? '#333' : '#fff'
                       }}
                     />
@@ -425,22 +425,10 @@ const Dashboard: React.FC = () => {
         }}
       >
         <Container maxWidth="xl">
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'inherit', gap: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'inherit', gap: 2 }}>
+            {/* Footer intentionally left minimal per user request */}
             <Typography variant="body2" color="text.secondary">
-              All rights of this site are reserved for Nadin Sadr Aria Engineering Company.
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              contact us : info@nadin.ir
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {new Date().toLocaleString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-              })}
+              
             </Typography>
           </Box>
         </Container>
