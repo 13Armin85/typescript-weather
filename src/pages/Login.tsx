@@ -13,6 +13,8 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '@mui/material/styles';
+import { useThemeMode } from '../contexts/ThemeContext';
 import weatherIllustration from '../assets/weather-illustration.png';
 
 const Login: React.FC = () => {
@@ -21,6 +23,8 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const theme = useTheme();
+  const { mode } = useThemeMode();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +47,7 @@ const Login: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#f0f4f8',
+        backgroundColor: theme.palette.background.default,
         padding: 2,
       }}
     >
@@ -66,7 +70,7 @@ const Login: React.FC = () => {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            backgroundColor: '#ffffff',
+            backgroundColor: theme.palette.background.paper,
           }}
         >
           <Typography
@@ -74,7 +78,7 @@ const Login: React.FC = () => {
             component="h1"
             gutterBottom
             fontWeight={600}
-            sx={{ mb: 4, color: '#1a1a2e' }}
+            sx={{ mb: 4, color: theme.palette.text.primary }}
           >
             Login
           </Typography>
@@ -93,7 +97,7 @@ const Login: React.FC = () => {
               sx={{
                 mb: 3,
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: '#fff',
+                  backgroundColor: mode === 'light' ? '#fff' : theme.palette.background.default,
                 },
               }}
               autoFocus
@@ -121,9 +125,10 @@ const Login: React.FC = () => {
                 fontSize: '1rem',
                 fontWeight: 600,
                 textTransform: 'uppercase',
-                backgroundColor: '#2196f3',
+                backgroundColor: theme.palette.primary.main,
+                color: theme.palette.primary.contrastText,
                 '&:hover': {
-                  backgroundColor: '#1976d2',
+                  backgroundColor: theme.palette.primary.dark,
                 },
               }}
             >
@@ -139,7 +144,7 @@ const Login: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#e3f2fd',
+            backgroundColor: mode === 'light' ? '#e3f2fd' : theme.palette.background.default,
             p: 4,
             minHeight: { xs: 300, md: 500 },
           }}
