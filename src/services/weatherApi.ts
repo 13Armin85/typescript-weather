@@ -34,9 +34,9 @@ export interface ForecastData {
 }
 
 // Geocode a city name to latitude/longitude using Open-Meteo geocoding API
-const geocodeCity = async (city: string) => {
+const geocodeCity = async (city: string, language = 'en') => {
   const url = 'https://geocoding-api.open-meteo.com/v1/search';
-  const resp = await axios.get(url, { params: { name: city, count: 1, language: 'en', format: 'json' } });
+  const resp = await axios.get(url, { params: { name: city, count: 1, language, format: 'json' } });
   const data = resp.data;
   if (!data || !data.results || data.results.length === 0) {
     throw new Error(`Could not geocode city: ${city}`);
@@ -76,6 +76,38 @@ const weatherCodeMap: Record<number, { icon: string; main: string; description: 
   99: { icon: '11d', main: 'Thunderstorm with hail', description: 'Thunderstorm with heavy hail' },
 };
 
+// Persian overrides for mapped descriptions (simple map)
+const weatherCodeFaMap: Record<number, string> = {
+  0: 'آسمان صاف',
+  1: 'نیمه‌آسمان صاف',
+  2: 'کمی ابری',
+  3: 'پوشیده از ابر',
+  45: 'مه',
+  48: 'مه همراه با یخ',
+  51: 'نم نم باران',
+  53: 'باران نم نم',
+  55: 'باران شدید',
+  56: 'نم نم یخبندان',
+  57: 'یخبندان شدید',
+  61: 'باران خفیف',
+  63: 'باران متوسط',
+  65: 'باران سنگین',
+  66: 'باران یخی خفیف',
+  67: 'باران یخی سنگین',
+  71: 'برف خفیف',
+  73: 'برف متوسط',
+  75: 'برف سنگین',
+  77: 'ذرات برف',
+  80: 'رگبار خفیف',
+  81: 'رگبار متوسط',
+  82: 'رگبار شدید',
+  85: 'بارش برف خفیف',
+  86: 'بارش برف سنگین',
+  95: 'طوفان همراه با رعد و برق',
+  96: 'طوفان با تگرگ خفیف',
+  99: 'طوفان با تگرگ شدید',
+};
+
 const mapWeatherCode = (code: number) => {
   return weatherCodeMap[code] || { icon: '03d', main: 'Unknown', description: 'Unknown' };
 };
@@ -88,8 +120,8 @@ export const getWeatherIcon = (iconCode: string): string => {
 // Helper to parse ISO time to unix seconds
 const toUnix = (iso?: string) => (iso ? Math.floor(new Date(iso).getTime() / 1000) : Math.floor(Date.now() / 1000));
 
-export const getCurrentWeather = async (city: string): Promise<WeatherData> => {
-  const place = await geocodeCity(city);
+export const getCurrentWeather = async (city: string, language = 'en'): Promise<WeatherData> => {
+  const place = await geocodeCity(city, language);
   const lat = place.latitude;
   const lon = place.longitude;
 
@@ -116,6 +148,7 @@ export const getCurrentWeather = async (city: string): Promise<WeatherData> => {
   const temp_min = daily.temperature_2m_min?.[0] ?? current.temperature;
   const weathercode = daily.weathercode?.[0] ?? current.weathercode ?? 0;
   const mapped = mapWeatherCode(weathercode);
+  const description = language === 'fa' ? (weatherCodeFaMap[weathercode] || mapped.description) : mapped.description;
 
   // try to get feels_like from hourly.apparent_temperature at current hour
   let feels_like = current.temperature;
@@ -131,7 +164,7 @@ export const getCurrentWeather = async (city: string): Promise<WeatherData> => {
 
   const result: WeatherData = {
     coord: { lon: lon, lat: lat },
-    weather: [{ id: weathercode, main: mapped.main, description: mapped.description, icon: mapped.icon }],
+  weather: [{ id: weathercode, main: mapped.main, description, icon: mapped.icon }],
     base: 'open-meteo',
     main: {
       temp: current.temperature,
@@ -159,7 +192,7 @@ export const getCurrentWeather = async (city: string): Promise<WeatherData> => {
   return result;
 };
 
-export const getCurrentWeatherByCoords = async (lat: number, lon: number): Promise<WeatherData> => {
+export const getCurrentWeatherByCoords = async (lat: number, lon: number, language = 'en'): Promise<WeatherData> => {
   // Similar to getCurrentWeather but skip geocoding
   const url = 'https://api.open-meteo.com/v1/forecast';
   const resp = await axios.get(url, {
@@ -181,6 +214,7 @@ export const getCurrentWeatherByCoords = async (lat: number, lon: number): Promi
   const temp_min = daily.temperature_2m_min?.[0] ?? current.temperature;
   const weathercode = daily.weathercode?.[0] ?? current.weathercode ?? 0;
   const mapped = mapWeatherCode(weathercode);
+  const description = language === 'fa' ? (weatherCodeFaMap[weathercode] || mapped.description) : mapped.description;
 
   let feels_like = current.temperature;
   try {
@@ -195,7 +229,7 @@ export const getCurrentWeatherByCoords = async (lat: number, lon: number): Promi
 
   const result: WeatherData = {
     coord: { lon: lon, lat: lat },
-    weather: [{ id: weathercode, main: mapped.main, description: mapped.description, icon: mapped.icon }],
+  weather: [{ id: weathercode, main: mapped.main, description, icon: mapped.icon }],
     base: 'open-meteo',
     main: {
       temp: current.temperature,
@@ -219,8 +253,8 @@ export const getCurrentWeatherByCoords = async (lat: number, lon: number): Promi
   return result;
 };
 
-export const getForecast = async (city: string): Promise<ForecastData> => {
-  const place = await geocodeCity(city);
+export const getForecast = async (city: string, language = 'en'): Promise<ForecastData> => {
+  const place = await geocodeCity(city, language);
   const lat = place.latitude;
   const lon = place.longitude;
 
@@ -248,11 +282,12 @@ export const getForecast = async (city: string): Promise<ForecastData> => {
     const temp = (tmax + tmin) / 2;
     const weathercode = daily.weathercode?.[i] ?? 0;
     const mapped = mapWeatherCode(weathercode);
+    const description = language === 'fa' ? (weatherCodeFaMap[weathercode] || mapped.description) : mapped.description;
 
     list.push({
       dt,
       main: { temp, feels_like: temp, temp_min: daily.temperature_2m_min?.[i] ?? temp, temp_max: daily.temperature_2m_max?.[i] ?? temp, pressure: 0, humidity: 0 },
-      weather: [{ id: weathercode, main: mapped.main, description: mapped.description, icon: mapped.icon }],
+      weather: [{ id: weathercode, main: mapped.main, description, icon: mapped.icon }],
       clouds: { all: 0 },
       wind: { speed: 0, deg: 0 },
       visibility: 10000,

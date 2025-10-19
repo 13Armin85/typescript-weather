@@ -68,52 +68,62 @@ const Dashboard: React.FC = () => {
 
   const monthlyData = getMonthlyTemperatureData();
 
+  const fetchWeatherData = React.useCallback(async (cityName: string, language = 'en') => {
+    setLoading(true);
+    setError('');
+    try {
+      const [weatherData, forecastData] = await Promise.all([
+        getCurrentWeather(cityName, language),
+        getForecast(cityName, language),
+      ]);
+      setWeather(weatherData);
+      setForecast(forecastData);
+    } catch (err: unknown) {
+      let message = t('weather.error');
+      try {
+        const maybeErr = err as { response?: { data?: { message?: string } } };
+        if (maybeErr.response?.data?.message) message = maybeErr.response.data.message;
+      } catch {
+        // ignore
+      }
+      setError(message);
+      console.error('Error fetching weather:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [t]);
+
   useEffect(() => {
     if (!userName) {
       navigate('/');
       return;
     }
-    fetchWeatherData(city);
-  }, [userName, navigate]);
+    fetchWeatherData(city, i18n.language);
+  }, [userName, navigate, city, i18n.language, fetchWeatherData]);
 
-  const fetchWeatherData = async (cityName: string) => {
-    setLoading(true);
-    setError('');
-    try {
-      const [weatherData, forecastData] = await Promise.all([
-        getCurrentWeather(cityName),
-        getForecast(cityName),
-      ]);
-      setWeather(weatherData);
-      setForecast(forecastData);
-    } catch (err: any) {
-      setError(err.response?.data?.message || t('weather.error'));
-      console.error('Error fetching weather:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  
 
   const handleCityChange = (newCity: string) => {
     setCity(newCity);
-    fetchWeatherData(newCity);
+    fetchWeatherData(newCity, i18n.language);
   };
 
   const getDayName = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    return days[date.getDay()];
+    const locale = i18n.language === 'fa' ? 'fa-IR' : 'en-US';
+    return date.toLocaleDateString(locale, { weekday: 'short' });
   };
 
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return `${date.getDate()} ${months[date.getMonth()]}, ${date.getFullYear()}`;
+    const locale = i18n.language === 'fa' ? 'fa-IR' : 'en-US';
+    return date.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
   const formatTime = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
-    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const locale = i18n.language === 'fa' ? 'fa-IR' : 'en-US';
+    return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
   };
 
   // Get 14 days forecast (one per day)
@@ -149,12 +159,11 @@ const Dashboard: React.FC = () => {
               }}
             >
               <Typography sx={{ color: 'white', fontWeight: 700 }}>W</Typography>
-            </Box>
+              </Box>
             <Typography variant="h6" fontWeight={600} sx={{ color: '#333' }}>
-              Weather Dashboard
+              {t('dashboard.title')}
             </Typography>
           </Box>
-
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <FormControl size="small" sx={{ minWidth: 200 }}>
               <Select
@@ -309,7 +318,7 @@ const Dashboard: React.FC = () => {
                       {Math.round(weather.main.temp)}°C
                     </Typography>
                     <Typography variant="body1" sx={{ mt: 1, color: mode === 'light' ? '#666' : '#ccc' }}>
-                      High: {Math.round(weather.main.temp_max)} Low: {Math.round(weather.main.temp_min)}
+                      {t('weather.high')}: {Math.round(weather.main.temp_max)} {t('weather.low')}: {Math.round(weather.main.temp_min)}
                     </Typography>
                   </Box>
                   <Box
@@ -325,7 +334,7 @@ const Dashboard: React.FC = () => {
                     {weather.weather[0].description}
                   </Typography>
                   <Typography variant="body2" sx={{ mt: 1, color: mode === 'light' ? '#666' : '#ccc' }}>
-                    Feels Like {Math.round(weather.main.feels_like)}
+                    {t('weather.feelsLike')} {Math.round(weather.main.feels_like)}
                   </Typography>
                 </Box>
               </Paper>
@@ -335,7 +344,7 @@ const Dashboard: React.FC = () => {
             <Grid item xs={12} md={6}>
               <Paper sx={{ p: 3, borderRadius: 2, minHeight: 350, backgroundColor: mode === 'light' ? '#fff' : '#2d2d2d', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
                 <Typography variant="h6" fontWeight={600} gutterBottom sx={{ color: mode === 'light' ? '#1a237e' : '#fff' }}>
-                  Average Monthly Temperature
+                  {t('dashboard.avgMonthlyTemp')}
                 </Typography>
                 <ResponsiveContainer width="100%" height={280}>
                   <LineChart data={monthlyData}>
@@ -373,7 +382,7 @@ const Dashboard: React.FC = () => {
             <Grid item xs={12}>
               <Paper sx={{ p: 3, borderRadius: 2, backgroundColor: mode === 'light' ? '#e8f4f8' : '#2d2d2d', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
                 <Typography variant="h6" fontWeight={600} gutterBottom sx={{ mb: 3, color: mode === 'light' ? '#1a237e' : '#fff' }}>
-                  2 weeks Forecast
+                  {t('dashboard.twoWeeksForecast')}
                 </Typography>
                 <Grid container spacing={2}>
                   {getDailyForecasts().map((day, index) => (
@@ -393,7 +402,7 @@ const Dashboard: React.FC = () => {
                         }}
                       >
                         <Typography variant="subtitle2" fontWeight={600} gutterBottom sx={{ color: mode === 'light' ? '#1a237e' : '#fff' }}>
-                          {index === 0 ? 'Today' : getDayName(day.dt)}
+                          {index === 0 ? t('today') : getDayName(day.dt)}
                         </Typography>
                         <Box
                           component="img"

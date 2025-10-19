@@ -37,6 +37,12 @@ const resources = {
       'theme.dark': 'Dark Mode',
       'theme.light': 'Light Mode',
       'language': 'Language',
+  'settings.mode': 'Mode',
+  'dashboard.avgMonthlyTemp': 'Average Monthly Temperature',
+  'dashboard.twoWeeksForecast': '2 weeks Forecast',
+  'today': 'Today',
+  'weather.high': 'High',
+  'weather.low': 'Low',
       
       // Days
       'days.monday': 'Monday',
@@ -83,6 +89,12 @@ const resources = {
       'theme.dark': 'حالت تاریک',
       'theme.light': 'حالت روشن',
       'language': 'زبان',
+  'settings.mode': 'حالت',
+  'dashboard.avgMonthlyTemp': 'میانگین دمای ماهانه',
+  'dashboard.twoWeeksForecast': 'پیش‌بینی ۲ هفته‌ای',
+  'today': 'امروز',
+  'weather.high': 'بیشینه',
+  'weather.low': 'کمینه',
       
       // Days
       'days.monday': 'دوشنبه',
