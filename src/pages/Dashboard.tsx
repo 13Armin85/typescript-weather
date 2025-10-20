@@ -56,7 +56,7 @@ const Dashboard: React.FC = () => {
     useState<HTMLButtonElement | null>(null);
 
   const { userName, logout } = useAuth();
-  const { theme, toggleTheme } = useThemeMode(); // ✅ تغییر از mode به theme
+  const { theme, toggleTheme } = useThemeMode();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
@@ -146,7 +146,6 @@ const Dashboard: React.FC = () => {
     });
   };
 
-  // Get 14 days forecast (one per day)
   const getDailyForecasts = () => {
     if (!forecast) return [];
     const dailyMap = new Map();
@@ -249,8 +248,20 @@ const Dashboard: React.FC = () => {
                 horizontal: "right",
               }}
             >
-              <Box sx={{ p: 3, minWidth: 200 }}>
-                <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+              <Box
+                sx={{
+                  p: 3,
+                  minWidth: 200,
+                  backgroundColor: theme === "light" ? "#ffffff" : "#1e2a3a",
+                  color: theme === "light" ? "#333" : "#fff",
+                }}
+              >
+                <Typography
+                  variant="subtitle2"
+                  fontWeight={600}
+                  gutterBottom
+                  sx={{ color: theme === "light" ? "#333" : "#fff" }}
+                >
                   Mode
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1, mb: 3 }}>
@@ -274,7 +285,12 @@ const Dashboard: React.FC = () => {
                   </MuiButton>
                 </Box>
 
-                <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+                <Typography
+                  variant="subtitle2"
+                  fontWeight={600}
+                  gutterBottom
+                  sx={{ color: theme === "light" ? "#333" : "#fff" }}
+                >
                   Language
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1, mb: 3 }}>
@@ -574,7 +590,6 @@ const Dashboard: React.FC = () => {
               gap: 2,
             }}
           >
-            {/* Footer intentionally left minimal per user request */}
             <Typography variant="body2" color="text.secondary"></Typography>
           </Box>
         </Container>

@@ -14,8 +14,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "@mui/material/styles";
-// remove useThemeMode to avoid error when ThemeProvider is not mounted
-// import { useThemeMode } from "../contexts/ThemeContext";
+import { useThemeMode } from "../contexts/ThemeContext";
 import weatherIllustration from "../assets/Frame 10.png";
 
 const Login: React.FC = () => {
@@ -24,9 +23,9 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const theme = useTheme();
-  // use MUI theme mode as a safe fallback (works even if custom ThemeProvider is commented out)
-  const mode = (theme.palette.mode as "light" | "dark") ?? "light";
+  const muiTheme = useTheme();
+  const { theme } = useThemeMode();
+  const mode: "light" | "dark" = theme === "dark" ? "dark" : "light";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,9 +48,8 @@ const Login: React.FC = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        // changed: full page background in dark mode
         backgroundColor:
-          mode === "dark" ? "#151D32" : theme.palette.background.default,
+          mode === "dark" ? "#151D32" : muiTheme.palette.background.default,
         padding: 2,
       }}
     >
@@ -65,7 +63,6 @@ const Login: React.FC = () => {
           overflow: "hidden",
           borderRadius: "4px",
           backgroundColor: mode === "dark" ? "#151D32" : undefined,
-          // ensure header/text inside Paper uses the requested dark color
           color: mode === "dark" ? "#292F45" : undefined,
         }}
       >
@@ -78,8 +75,7 @@ const Login: React.FC = () => {
             flexDirection: "column",
             justifyContent: "center",
             backgroundColor:
-              mode === "dark" ? "#151D32" : theme.palette.background.paper,
-            // set container text color so children inherit it
+              mode === "dark" ? "#151D32" : muiTheme.palette.background.paper,
             color: mode === "dark" ? "#292F45" : undefined,
           }}
         >
@@ -90,11 +86,10 @@ const Login: React.FC = () => {
             fontWeight={600}
             sx={{
               mb: 4,
-              // force header color (use !important to override any other CSS)
               color:
                 mode === "dark"
                   ? "#292F45 !important"
-                  : theme.palette.text.primary,
+                  : muiTheme.palette.text.primary,
             }}
           >
             Login
@@ -111,14 +106,13 @@ const Login: React.FC = () => {
               }}
               error={!!error}
               helperText={error}
-              // changed: item colors in dark mode
               sx={{
                 mb: 3,
                 "& .MuiOutlinedInput-root": {
                   backgroundColor:
                     mode === "light"
                       ? "#fff"
-                      : theme.palette.background.default,
+                      : muiTheme.palette.background.default,
                 },
                 "& .MuiInputBase-input": {
                   color: mode === "dark" ? "#292F45" : undefined,
@@ -158,10 +152,10 @@ const Login: React.FC = () => {
                 fontSize: "1rem",
                 fontWeight: 600,
                 textTransform: "uppercase",
-                backgroundColor: theme.palette.primary.main,
-                color: theme.palette.primary.contrastText,
+                backgroundColor: muiTheme.palette.primary.main,
+                color: muiTheme.palette.primary.contrastText,
                 "&:hover": {
-                  backgroundColor: theme.palette.primary.dark,
+                  backgroundColor: muiTheme.palette.primary.dark,
                 },
               }}
             >
@@ -173,19 +167,18 @@ const Login: React.FC = () => {
         {/* Right Side - Weather Illustration */}
         <Box
           sx={{
-            flex: 0.99, // افزایش عرض بخش تصویر (نسبت به فرم)
+            flex: 0.99,
             display: "flex",
             alignItems: "stretch",
             justifyContent: "stretch",
             p: 0,
             minHeight: { xs: 300, md: 500 },
-            // changed: right box background in dark mode
             backgroundColor:
               mode === "dark"
                 ? "#151D32"
                 : mode === "light"
                 ? "#e3f2fd"
-                : theme.palette.background.default,
+                : muiTheme.palette.background.default,
           }}
         >
           <Box
