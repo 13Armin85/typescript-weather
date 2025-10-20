@@ -116,11 +116,55 @@ All colors MUST be HSL.
   }
 }
 
-/* header از متغیر استفاده کند */
 header {
   background: var(--header-bg);
 }
 .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-regular.css-1yo9slo-MuiToolbar-root {
-  /* به جای رنگ ثابت از متغیر استفاده کنید تا با حالت دارک/لایت همگام باشد */
   background-color: var(--header-bg) !important;
+}
+.MuiContainer-root.MuiContainer-maxWidthXl.css-4i30i7-MuiContainer-root {
+  background-color: #151d32;
+}
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.css-da4wxi-MuiPaper-root {
+  background-color: #292f45;
+}
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.css-29kp3s-MuiPaper-root {
+  background-color: #292f45;
+}
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.css-1r5pxjk-MuiPaper-root {
+  background-color: #292f45;
+}
+.MuiBox-root.css-vlpvy0 {
+  background-color: #151d32;
+}
+.MuiBox-root.css-mp2303 {
+  display: none;
+}
+.MuiTypography-root.MuiTypography-h6.css-1mgridi-MuiTypography-root {
+  color: white;
+}
+.css-mhc70k-MuiGrid-root {
+  flex-wrap: inherit !important;
+}
+.css-je6oj5-MuiPaper-root {
+  background-color: #3f4861;
+}
+.css-29kp3s-MuiPaper-root {
+  min-height: 440px !important;
+}
+.css-tta02v-MuiPaper-root {
+  min-height: 440px !important;
+}
+.MuiContainer-root.MuiContainer-maxWidthXl.css-4i30i7-MuiContainer-root {
+  background-color: #f5f7fa00 !important;
+}
+
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.css-tta02v-MuiPaper-root {
+  background-color: #e1e9ee;
+}
+.css-1vl01ga-MuiPaper-root {
+  background-color: #e1e9ee !important;
+}
+.css-1m4mzyg-MuiPaper-root {
+  background-color: #e1e9ee !important ;
 }

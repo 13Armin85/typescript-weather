@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -14,7 +14,7 @@ import {
   Alert,
   Grid,
   Paper,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Settings as SettingsIcon,
   LocationOn as LocationIcon,
@@ -23,12 +23,20 @@ import {
   ExitToApp as ExitIcon,
   Email as EmailIcon,
   CalendarToday as CalendarIcon,
-} from '@mui/icons-material';
-import { Popover, Button as MuiButton } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useAuth } from '../contexts/AuthContext';
-import { useThemeMode } from '../contexts/ThemeContext';
+} from "@mui/icons-material";
+import { Popover, Button as MuiButton } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { useAuth } from "../contexts/AuthContext";
+import { useThemeMode } from "../contexts/ThemeContext";
 import {
   getCurrentWeather,
   getForecast,
@@ -36,18 +44,19 @@ import {
   ForecastData,
   getWeatherIcon,
   getMonthlyTemperatureData,
-} from '../services/weatherApi';
+} from "../services/weatherApi";
 
 const Dashboard: React.FC = () => {
-  const [city, setCity] = useState('San Francisco');
+  const [city, setCity] = useState("San Francisco");
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [forecast, setForecast] = useState<ForecastData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [settingsAnchor, setSettingsAnchor] = useState<HTMLButtonElement | null>(null);
+  const [error, setError] = useState("");
+  const [settingsAnchor, setSettingsAnchor] =
+    useState<HTMLButtonElement | null>(null);
 
   const { userName, logout } = useAuth();
-  const { mode, toggleTheme } = useThemeMode();
+  const { theme, toggleTheme } = useThemeMode(); // ✅ تغییر از mode به theme
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
@@ -61,47 +70,51 @@ const Dashboard: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   const settingsOpen = Boolean(settingsAnchor);
 
   const monthlyData = getMonthlyTemperatureData();
 
-  const fetchWeatherData = React.useCallback(async (cityName: string, language = 'en') => {
-    setLoading(true);
-    setError('');
-    try {
-      const [weatherData, forecastData] = await Promise.all([
-        getCurrentWeather(cityName, language),
-        getForecast(cityName, language),
-      ]);
-      setWeather(weatherData);
-      setForecast(forecastData);
-    } catch (err: unknown) {
-      let message = t('weather.error');
+  const fetchWeatherData = React.useCallback(
+    async (cityName: string, language = "en") => {
+      setLoading(true);
+      setError("");
       try {
-        const maybeErr = err as { response?: { data?: { message?: string } } };
-        if (maybeErr.response?.data?.message) message = maybeErr.response.data.message;
-      } catch {
-        // ignore
+        const [weatherData, forecastData] = await Promise.all([
+          getCurrentWeather(cityName, language),
+          getForecast(cityName, language),
+        ]);
+        setWeather(weatherData);
+        setForecast(forecastData);
+      } catch (err: unknown) {
+        let message = t("weather.error");
+        try {
+          const maybeErr = err as {
+            response?: { data?: { message?: string } };
+          };
+          if (maybeErr.response?.data?.message)
+            message = maybeErr.response.data.message;
+        } catch {
+          // ignore
+        }
+        setError(message);
+        console.error("Error fetching weather:", err);
+      } finally {
+        setLoading(false);
       }
-      setError(message);
-      console.error('Error fetching weather:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [t]);
+    },
+    [t]
+  );
 
   useEffect(() => {
     if (!userName) {
-      navigate('/');
+      navigate("/");
       return;
     }
     fetchWeatherData(city, i18n.language);
   }, [userName, navigate, city, i18n.language, fetchWeatherData]);
-
-  
 
   const handleCityChange = (newCity: string) => {
     setCity(newCity);
@@ -110,20 +123,27 @@ const Dashboard: React.FC = () => {
 
   const getDayName = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
-    const locale = i18n.language === 'fa' ? 'fa-IR' : 'en-US';
-    return date.toLocaleDateString(locale, { weekday: 'short' });
+    const locale = i18n.language === "fa" ? "fa-IR" : "en-US";
+    return date.toLocaleDateString(locale, { weekday: "short" });
   };
 
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
-    const locale = i18n.language === 'fa' ? 'fa-IR' : 'en-US';
-    return date.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
+    const locale = i18n.language === "fa" ? "fa-IR" : "en-US";
+    return date.toLocaleDateString(locale, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   };
 
   const formatTime = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
-    const locale = i18n.language === 'fa' ? 'fa-IR' : 'en-US';
-    return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+    const locale = i18n.language === "fa" ? "fa-IR" : "en-US";
+    return date.toLocaleTimeString(locale, {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   // Get 14 days forecast (one per day)
@@ -139,40 +159,59 @@ const Dashboard: React.FC = () => {
     return Array.from(dailyMap.values()).slice(0, 14);
   };
 
-  const cities = ['San Francisco', 'New York', 'London', 'Tokyo', 'Tehran', 'Paris', 'Dubai'];
+  const cities = [
+    "San Francisco",
+    "New York",
+    "London",
+    "Tokyo",
+    "Tehran",
+    "Paris",
+    "Dubai",
+  ];
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: mode === 'light' ? '#f5f7fa' : '#1a1a2e' }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        backgroundColor: theme === "light" ? "#f5f7fa" : "#1a1a2e",
+      }}
+    >
       {/* Header */}
-      <AppBar position="static" elevation={0} sx={{ backgroundColor: 'white', color: '#333' }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <AppBar
+        position="static"
+        elevation={0}
+        sx={{ backgroundColor: "white", color: "#333" }}
+      >
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Box
               sx={{
                 width: 40,
                 height: 40,
                 borderRadius: 1,
-                background: 'linear-gradient(135deg, #42a5f5 0%, #478ed1 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                background: "linear-gradient(135deg, #42a5f5 0%, #478ed1 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              <Typography sx={{ color: 'white', fontWeight: 700 }}>W</Typography>
-              </Box>
-            <Typography variant="h6" fontWeight={600} sx={{ color: '#333' }}>
-              {t('dashboard.title')}
+              <Typography sx={{ color: "white", fontWeight: 700 }}>
+                W
+              </Typography>
+            </Box>
+            <Typography variant="h6" fontWeight={600} sx={{ color: "#333" }}>
+              {t("dashboard.title")}
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <FormControl size="small" sx={{ minWidth: 200 }}>
               <Select
                 value={city}
                 onChange={(e) => handleCityChange(e.target.value)}
                 displayEmpty
                 sx={{
-                  backgroundColor: '#f5f7fa',
-                  '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                  backgroundColor: "#f5f7fa",
+                  "& .MuiOutlinedInput-notchedOutline": { border: "none" },
                 }}
               >
                 <MenuItem value="" disabled>
@@ -186,12 +225,12 @@ const Dashboard: React.FC = () => {
               </Select>
             </FormControl>
 
-            <IconButton 
-              sx={{ 
-                color: '#42a5f5',
-                backgroundColor: '#e3f2fd',
-                '&:hover': { backgroundColor: '#bbdefb' }
-              }} 
+            <IconButton
+              sx={{
+                color: "#42a5f5",
+                backgroundColor: "#e3f2fd",
+                "&:hover": { backgroundColor: "#bbdefb" },
+              }}
               onClick={handleSettingsClick}
             >
               <SettingsIcon />
@@ -202,33 +241,33 @@ const Dashboard: React.FC = () => {
               anchorEl={settingsAnchor}
               onClose={handleSettingsClose}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
+                vertical: "bottom",
+                horizontal: "right",
               }}
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
             >
               <Box sx={{ p: 3, minWidth: 200 }}>
                 <Typography variant="subtitle2" fontWeight={600} gutterBottom>
                   Mode
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
+                <Box sx={{ display: "flex", gap: 1, mb: 3 }}>
                   <MuiButton
-                    variant={mode === 'light' ? 'contained' : 'outlined'}
+                    variant={theme === "light" ? "contained" : "outlined"}
                     size="small"
                     startIcon={<LightModeIcon />}
-                    onClick={() => mode === 'dark' && toggleTheme()}
+                    onClick={() => theme === "dark" && toggleTheme()}
                     sx={{ flex: 1 }}
                   >
                     Light
                   </MuiButton>
                   <MuiButton
-                    variant={mode === 'dark' ? 'contained' : 'outlined'}
+                    variant={theme === "dark" ? "contained" : "outlined"}
                     size="small"
                     startIcon={<DarkModeIcon />}
-                    onClick={() => mode === 'light' && toggleTheme()}
+                    onClick={() => theme === "light" && toggleTheme()}
                     sx={{ flex: 1 }}
                   >
                     Dark
@@ -238,19 +277,19 @@ const Dashboard: React.FC = () => {
                 <Typography variant="subtitle2" fontWeight={600} gutterBottom>
                   Language
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
+                <Box sx={{ display: "flex", gap: 1, mb: 3 }}>
                   <MuiButton
-                    variant={i18n.language === 'en' ? 'contained' : 'outlined'}
+                    variant={i18n.language === "en" ? "contained" : "outlined"}
                     size="small"
-                    onClick={() => i18n.changeLanguage('en')}
+                    onClick={() => i18n.changeLanguage("en")}
                     sx={{ flex: 1 }}
                   >
                     En
                   </MuiButton>
                   <MuiButton
-                    variant={i18n.language === 'fa' ? 'contained' : 'outlined'}
+                    variant={i18n.language === "fa" ? "contained" : "outlined"}
                     size="small"
-                    onClick={() => i18n.changeLanguage('fa')}
+                    onClick={() => i18n.changeLanguage("fa")}
                     sx={{ flex: 1 }}
                   >
                     Fa
@@ -274,7 +313,7 @@ const Dashboard: React.FC = () => {
 
       <Container maxWidth="xl" sx={{ py: 4 }}>
         {loading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
             <CircularProgress size={60} />
           </Box>
         )}
@@ -293,32 +332,63 @@ const Dashboard: React.FC = () => {
                 sx={{
                   p: 4,
                   borderRadius: 2,
-                  backgroundColor: mode === 'light' ? '#e8f4f8' : '#2d3436',
+                  backgroundColor: theme === "light" ? "#e8f4f8" : "#2d3436",
                   minHeight: 350,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                  <LocationIcon sx={{ color: mode === 'light' ? '#333' : '#fff' }} />
-                  <Typography variant="h6" sx={{ color: mode === 'light' ? '#333' : '#fff' }}>
+                <Box
+                  sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
+                >
+                  <LocationIcon
+                    sx={{ color: theme === "light" ? "#333" : "#fff" }}
+                  />
+                  <Typography
+                    variant="h6"
+                    sx={{ color: theme === "light" ? "#333" : "#fff" }}
+                  >
                     {weather.name}
                   </Typography>
                 </Box>
 
-                <Typography variant="h4" fontWeight={700} sx={{ mb: 1, color: mode === 'light' ? '#1a237e' : '#fff' }}>
+                <Typography
+                  variant="h4"
+                  fontWeight={700}
+                  sx={{ mb: 1, color: theme === "light" ? "#1a237e" : "#fff" }}
+                >
                   {getDayName(weather.dt)}
                 </Typography>
-                <Typography variant="body2" sx={{ mb: 3, color: mode === 'light' ? '#666' : '#ccc' }}>
+                <Typography
+                  variant="body2"
+                  sx={{ mb: 3, color: theme === "light" ? "#666" : "#ccc" }}
+                >
                   {formatDate(weather.dt)} {formatTime(weather.dt)}
                 </Typography>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Box>
-                    <Typography variant="h1" fontWeight={700} sx={{ color: mode === 'light' ? '#1a237e' : '#fff', fontSize: '4rem' }}>
+                    <Typography
+                      variant="h1"
+                      fontWeight={700}
+                      sx={{
+                        color: theme === "light" ? "#1a237e" : "#fff",
+                        fontSize: "4rem",
+                      }}
+                    >
                       {Math.round(weather.main.temp)}°C
                     </Typography>
-                    <Typography variant="body1" sx={{ mt: 1, color: mode === 'light' ? '#666' : '#ccc' }}>
-                      {t('weather.high')}: {Math.round(weather.main.temp_max)} {t('weather.low')}: {Math.round(weather.main.temp_min)}
+                    <Typography
+                      variant="body1"
+                      sx={{ mt: 1, color: theme === "light" ? "#666" : "#ccc" }}
+                    >
+                      {t("weather.high")}: {Math.round(weather.main.temp_max)}{" "}
+                      {t("weather.low")}: {Math.round(weather.main.temp_min)}
                     </Typography>
                   </Box>
                   <Box
@@ -330,11 +400,21 @@ const Dashboard: React.FC = () => {
                 </Box>
 
                 <Box sx={{ mt: 3 }}>
-                  <Typography variant="h5" sx={{ textTransform: 'capitalize', color: mode === 'light' ? '#333' : '#fff' }}>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      textTransform: "capitalize",
+                      color: theme === "light" ? "#333" : "#fff",
+                    }}
+                  >
                     {weather.weather[0].description}
                   </Typography>
-                  <Typography variant="body2" sx={{ mt: 1, color: mode === 'light' ? '#666' : '#ccc' }}>
-                    {t('weather.feelsLike')} {Math.round(weather.main.feels_like)}
+                  <Typography
+                    variant="body2"
+                    sx={{ mt: 1, color: theme === "light" ? "#666" : "#ccc" }}
+                  >
+                    {t("weather.feelsLike")}{" "}
+                    {Math.round(weather.main.feels_like)}
                   </Typography>
                 </Box>
               </Paper>
@@ -342,36 +422,65 @@ const Dashboard: React.FC = () => {
 
             {/* Monthly Temperature Chart */}
             <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3, borderRadius: 2, minHeight: 350, backgroundColor: mode === 'light' ? '#fff' : '#2d2d2d', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                <Typography variant="h6" fontWeight={600} gutterBottom sx={{ color: mode === 'light' ? '#1a237e' : '#fff' }}>
-                  {t('dashboard.avgMonthlyTemp')}
+              <Paper
+                sx={{
+                  p: 3,
+                  borderRadius: 2,
+                  minHeight: 350,
+                  backgroundColor: theme === "light" ? "#fff" : "#2d2d2d",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  fontWeight={600}
+                  gutterBottom
+                  sx={{ color: theme === "light" ? "#1a237e" : "#fff" }}
+                >
+                  {t("dashboard.avgMonthlyTemp")}
                 </Typography>
                 <ResponsiveContainer width="100%" height={280}>
                   <LineChart data={monthlyData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={mode === 'light' ? '#e0e0e0' : '#444'} />
-                    <XAxis 
-                      dataKey="month" 
-                      tick={{ fontSize: 12, fill: mode === 'light' ? '#666' : '#ccc' }}
-                      stroke={mode === 'light' ? '#666' : '#ccc'}
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke={theme === "light" ? "#e0e0e0" : "#444"}
                     />
-                    <YAxis 
-                      tick={{ fontSize: 12, fill: mode === 'light' ? '#666' : '#ccc' }}
-                      stroke={mode === 'light' ? '#666' : '#ccc'}
-                      label={{ value: '°C', angle: -90, position: 'insideLeft', fill: mode === 'light' ? '#666' : '#ccc' }}
+                    <XAxis
+                      dataKey="month"
+                      tick={{
+                        fontSize: 12,
+                        fill: theme === "light" ? "#666" : "#ccc",
+                      }}
+                      stroke={theme === "light" ? "#666" : "#ccc"}
                     />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: mode === 'light' ? '#fff' : '#333',
-                        border: `none ${mode === 'light' ? '#e0e0e0' : '#555'}`,
-                        color: mode === 'light' ? '#333' : '#fff'
+                    <YAxis
+                      tick={{
+                        fontSize: 12,
+                        fill: theme === "light" ? "#666" : "#ccc",
+                      }}
+                      stroke={theme === "light" ? "#666" : "#ccc"}
+                      label={{
+                        value: "°C",
+                        angle: -90,
+                        position: "insideLeft",
+                        fill: theme === "light" ? "#666" : "#ccc",
                       }}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="temp" 
-                      stroke="#42a5f5" 
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: theme === "light" ? "#fff" : "#333",
+                        border: `none ${
+                          theme === "light" ? "#e0e0e0" : "#555"
+                        }`,
+                        color: theme === "light" ? "#333" : "#fff",
+                      }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="temp"
+                      stroke="#42a5f5"
                       strokeWidth={3}
-                      dot={{ fill: '#42a5f5', r: 5 }}
+                      dot={{ fill: "#42a5f5", r: 5 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -380,9 +489,21 @@ const Dashboard: React.FC = () => {
 
             {/* 2 Weeks Forecast */}
             <Grid item xs={12}>
-              <Paper sx={{ p: 3, borderRadius: 2, backgroundColor: mode === 'light' ? '#e8f4f8' : '#2d2d2d', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                <Typography variant="h6" fontWeight={600} gutterBottom sx={{ mb: 3, color: mode === 'light' ? '#1a237e' : '#fff' }}>
-                  {t('dashboard.twoWeeksForecast')}
+              <Paper
+                sx={{
+                  p: 3,
+                  borderRadius: 2,
+                  backgroundColor: theme === "light" ? "#e8f4f8" : "#2d2d2d",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  fontWeight={600}
+                  gutterBottom
+                  sx={{ mb: 3, color: theme === "light" ? "#1a237e" : "#fff" }}
+                >
+                  {t("dashboard.twoWeeksForecast")}
                 </Typography>
                 <Grid container spacing={2}>
                   {getDailyForecasts().map((day, index) => (
@@ -391,18 +512,24 @@ const Dashboard: React.FC = () => {
                         elevation={0}
                         sx={{
                           p: 2.5,
-                          textAlign: 'center',
-                          backgroundColor: mode === 'light' ? '#d4e9f2' : '#1a1a2e',
+                          textAlign: "center",
+                          backgroundColor:
+                            theme === "light" ? "#d4e9f2" : "#1a1a2e",
                           borderRadius: 2,
-                          transition: 'transform 0.2s',
-                          '&:hover': {
-                            transform: 'translateY(-4px)',
+                          transition: "transform 0.2s",
+                          "&:hover": {
+                            transform: "translateY(-4px)",
                             boxShadow: 2,
                           },
                         }}
                       >
-                        <Typography variant="subtitle2" fontWeight={600} gutterBottom sx={{ color: mode === 'light' ? '#1a237e' : '#fff' }}>
-                          {index === 0 ? t('today') : getDayName(day.dt)}
+                        <Typography
+                          variant="subtitle2"
+                          fontWeight={600}
+                          gutterBottom
+                          sx={{ color: theme === "light" ? "#1a237e" : "#fff" }}
+                        >
+                          {index === 0 ? t("today") : getDayName(day.dt)}
                         </Typography>
                         <Box
                           component="img"
@@ -410,7 +537,11 @@ const Dashboard: React.FC = () => {
                           alt={day.weather[0].description}
                           sx={{ width: 70, height: 70, my: 1 }}
                         />
-                        <Typography variant="h6" fontWeight={700} sx={{ color: mode === 'light' ? '#1a237e' : '#fff' }}>
+                        <Typography
+                          variant="h6"
+                          fontWeight={700}
+                          sx={{ color: theme === "light" ? "#1a237e" : "#fff" }}
+                        >
                           {Math.round(day.main.temp)}°C
                         </Typography>
                       </Paper>
@@ -428,17 +559,23 @@ const Dashboard: React.FC = () => {
         sx={{
           mt: 4,
           py: 2,
-          backgroundColor: mode === 'light' ? '#f5f5f5' : '#1e1e1e',
-          borderTop: '1px solid',
-          borderColor: 'divider',
+          backgroundColor: theme === "light" ? "#f5f5f5" : "#1e1e1e",
+          borderTop: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Container maxWidth="xl">
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'inherit', gap: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexWrap: "inherit",
+              gap: 2,
+            }}
+          >
             {/* Footer intentionally left minimal per user request */}
-            <Typography variant="body2" color="text.secondary">
-              
-            </Typography>
+            <Typography variant="body2" color="text.secondary"></Typography>
           </Box>
         </Container>
       </Box>
