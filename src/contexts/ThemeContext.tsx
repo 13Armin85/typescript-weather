@@ -20,17 +20,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     localStorage.setItem("theme", theme);
 
-    // Apply dark class to documentElement for Tailwind
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
     }
 
-    // Set data-theme attribute for MUI compatibility
     document.documentElement.setAttribute("data-theme", theme);
 
-    // Set header background based on theme
     const headerBg = theme === "dark" ? "#151D32" : "#ffffff";
     document.documentElement.style.setProperty("--header-bg", headerBg);
   }, [theme]);

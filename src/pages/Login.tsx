@@ -87,9 +87,7 @@ const Login: React.FC = () => {
               mb: 4,
               textAlign: "center",
               color:
-                mode === "dark"
-                  ? "#E6E9F2"
-                  : muiTheme.palette.text.primary,
+                mode === "dark" ? "#E6E9F2" : muiTheme.palette.text.primary,
             }}
           >
             {t ? t("login.title") ?? "Login" : "Login"}
@@ -98,7 +96,11 @@ const Login: React.FC = () => {
           <form onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              placeholder={t ? t("login.namePlaceholder") ?? "Enter Your Name" : "Enter Your Name"}
+              placeholder={
+                t
+                  ? t("login.namePlaceholder") ?? "Enter Your Name"
+                  : "Enter Your Name"
+              }
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
@@ -147,26 +149,28 @@ const Login: React.FC = () => {
               {t ? t("login") ?? "LOGIN" : "LOGIN"}
             </Button>
           </form>
-
-          {/* LANGUAGE SELECT - EXACT STYLE LIKE IMAGE */}
           <Box
             sx={{
               mt: { xs: 5, md: 7 },
               width: "100%",
-              // border bottom line that spans entire width
-              borderBottom: mode === "dark" ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.25)",
+
+              borderBottom:
+                mode === "dark"
+                  ? "1px solid rgba(255,255,255,0.06)"
+                  : "1px solid rgba(0,0,0,0.25)",
               pb: 1,
-              // Provide some left/right padding so line doesn't touch paper edge
               px: { xs: 1, md: 0 },
             }}
           >
-            {/* small label */}
             <Typography
               component="div"
               sx={{
                 fontSize: "15px",
                 lineHeight: 1.2,
-                color: mode === "dark" ? "rgba(230,233,242,0.7)" : "rgba(0,0,0,0.54)",
+                color:
+                  mode === "dark"
+                    ? "rgba(230,233,242,0.7)"
+                    : "rgba(0,0,0,0.54)",
                 mb: 1,
                 fontWeight: 400,
               }}
@@ -174,7 +178,6 @@ const Login: React.FC = () => {
               Language
             </Typography>
 
-            {/* the big language text with dropdown arrow on right */}
             <Box
               sx={{
                 position: "relative",
@@ -182,10 +185,7 @@ const Login: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "space-between",
                 width: "100%",
-                // make the clickable/select area tall like image
                 minHeight: 64,
-                // Ensure the big text looks exactly like the screenshot
-                // We'll use MUI Select but style its display to be large.
               }}
             >
               <Select
@@ -194,43 +194,38 @@ const Login: React.FC = () => {
                   handleLanguageChange(e.target.value as string)
                 }
                 variant="filled"
-                // keep visual outline/filled removed
                 sx={{
                   width: "100%",
-                  // remove default background and borders of filled variant
                   backgroundColor: "transparent",
                   "& .MuiSelect-select": {
-                    // very large text like screenshot
                     fontSize: "15px",
                     lineHeight: 1,
                     fontWeight: 300,
                     padding: 0,
-                    // ensure the text sits left
                     justifyContent: "flex-start",
-                    // make color dark like screenshot
                     color: mode === "dark" ? "#E6E9F2" : "rgba(0,0,0,0.87)",
                   },
-                  // move the icon to the right end and make it medium grey
                   "& .MuiSvgIcon-root": {
                     position: "absolute",
                     right: 0,
                     top: "20%",
                     transform: "translateY(-50%)",
                     fontSize: 20,
-                    color: mode === "dark" ? "rgba(230,233,242,0.7)" : "rgba(0,0,0,0.54)",
+                    color:
+                      mode === "dark"
+                        ? "rgba(230,233,242,0.7)"
+                        : "rgba(0,0,0,0.54)",
                   },
-                  // remove underline/underline effects
+
                   "&:before, &:after": {
                     display: "none",
                   },
                 }}
-                // keep menu aligned with select
                 MenuProps={{
                   PaperProps: {
                     sx: { mt: 1 },
                   },
                 }}
-                // ensure select does not show a filled background
                 disableUnderline
               >
                 <MenuItem value="en">English</MenuItem>
@@ -240,7 +235,6 @@ const Login: React.FC = () => {
           </Box>
         </Box>
 
-        {/* Right Side - Weather Illustration */}
         <Box
           sx={{
             flex: 0.99,

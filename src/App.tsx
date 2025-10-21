@@ -6,8 +6,7 @@ import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./index.css";
-import "./i18n/config"; // اگر فایل i18n/config.ts دارید برای init i18n
-
+import "./i18n/config";
 const App: React.FC = () => {
   return (
     <ThemeProvider>
