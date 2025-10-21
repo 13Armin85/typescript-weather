@@ -141,7 +141,10 @@ header {
   display: none;
 }
 .MuiTypography-root.MuiTypography-h6.css-1mgridi-MuiTypography-root {
-  color: white;
+  color: #8994ad;
+}
+.css-1vmu0b-MuiFormControl-root-MuiTextField-root .MuiInputBase-input{
+  color: black !important;
 }
 .css-mhc70k-MuiGrid-root {
   flex-wrap: inherit !important;
@@ -173,4 +176,15 @@ h1.MuiTypography-root.MuiTypography-h4.MuiTypography-gutterBottom.css-gbyfz7-Mui
 }
 .css-1keizs3{
   min-height: 30px !important;
+}
+.MuiBox-root.css-h3hwo5{
+  display: none;
+}
+.MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-2.css-mhc70k-MuiGrid-root{
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation0.css-1azk3q1-MuiPaper-root{
+  width: 170px !important;
+  height: 266px !important;
 }
