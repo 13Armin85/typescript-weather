@@ -7,9 +7,8 @@ import {
   Typography,
   Select,
   MenuItem,
-  FormControl,
-  InputLabel,
   Paper,
+  SelectChangeEvent,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
@@ -30,7 +29,7 @@ const Login: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError(t("login.nameRequired"));
+      setError(t ? t("login.nameRequired") : "Name is required");
       return;
     }
     login(name.trim());
@@ -50,7 +49,7 @@ const Login: React.FC = () => {
         justifyContent: "center",
         backgroundColor:
           mode === "dark" ? "#151D32" : muiTheme.palette.background.default,
-        padding: 2,
+        p: 2,
       }}
     >
       <Paper
@@ -61,22 +60,22 @@ const Login: React.FC = () => {
           maxWidth: 900,
           width: "100%",
           overflow: "hidden",
-          borderRadius: "4px",
+          borderRadius: "12px",
           backgroundColor: mode === "dark" ? "#151D32" : undefined,
-          color: mode === "dark" ? "#292F45" : undefined,
+          color: mode === "dark" ? "#E6E9F2" : undefined,
         }}
       >
         {/* Left Side - Login Form */}
         <Box
           sx={{
             flex: 1,
-            p: "80px",
+            p: { xs: 6, md: "80px" },
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             backgroundColor:
               mode === "dark" ? "#151D32" : muiTheme.palette.background.paper,
-            color: mode === "dark" ? "#292F45" : undefined,
+            color: mode === "dark" ? "#E6E9F2" : undefined,
           }}
         >
           <Typography
@@ -86,19 +85,20 @@ const Login: React.FC = () => {
             fontWeight={600}
             sx={{
               mb: 4,
+              textAlign: "center",
               color:
                 mode === "dark"
-                  ? "#292F45 !important"
+                  ? "#E6E9F2"
                   : muiTheme.palette.text.primary,
             }}
           >
-            Login
+            {t ? t("login.title") ?? "Login" : "Login"}
           </Typography>
 
           <form onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              placeholder="Enter Your Name"
+              placeholder={t ? t("login.namePlaceholder") ?? "Enter Your Name" : "Enter Your Name"}
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
@@ -115,32 +115,17 @@ const Login: React.FC = () => {
                       : muiTheme.palette.background.default,
                 },
                 "& .MuiInputBase-input": {
-                  color: mode === "dark" ? "#292F45" : undefined,
+                  color: mode === "dark" ? "#E6E9F2" : undefined,
                 },
                 "& .MuiFormHelperText-root": {
-                  color: mode === "dark" ? "#292F45" : undefined,
-                },
-                "& .MuiInputLabel-root": {
-                  color: mode === "dark" ? "#292F45" : undefined,
+                  color: mode === "dark" ? "#FFB4B4" : undefined,
                 },
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: mode === "dark" ? "#292F45" : undefined,
+                  borderColor: mode === "dark" ? "#37435A" : undefined,
                 },
               }}
               autoFocus
             />
-
-            <FormControl fullWidth sx={{ mb: 3 }}>
-              <InputLabel>Language</InputLabel>
-              <Select
-                value={i18n.language}
-                label="Language"
-                onChange={(e) => handleLanguageChange(e.target.value)}
-              >
-                <MenuItem value="en">English</MenuItem>
-                <MenuItem value="fa">فارسی</MenuItem>
-              </Select>
-            </FormControl>
 
             <Button
               type="submit"
@@ -159,9 +144,100 @@ const Login: React.FC = () => {
                 },
               }}
             >
-              LOGIN
+              {t ? t("login") ?? "LOGIN" : "LOGIN"}
             </Button>
           </form>
+
+          {/* LANGUAGE SELECT - EXACT STYLE LIKE IMAGE */}
+          <Box
+            sx={{
+              mt: { xs: 5, md: 7 },
+              width: "100%",
+              // border bottom line that spans entire width
+              borderBottom: mode === "dark" ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.25)",
+              pb: 1,
+              // Provide some left/right padding so line doesn't touch paper edge
+              px: { xs: 1, md: 0 },
+            }}
+          >
+            {/* small label */}
+            <Typography
+              component="div"
+              sx={{
+                fontSize: "15px",
+                lineHeight: 1.2,
+                color: mode === "dark" ? "rgba(230,233,242,0.7)" : "rgba(0,0,0,0.54)",
+                mb: 1,
+                fontWeight: 400,
+              }}
+            >
+              Language
+            </Typography>
+
+            {/* the big language text with dropdown arrow on right */}
+            <Box
+              sx={{
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+                // make the clickable/select area tall like image
+                minHeight: 64,
+                // Ensure the big text looks exactly like the screenshot
+                // We'll use MUI Select but style its display to be large.
+              }}
+            >
+              <Select
+                value={i18n.language}
+                onChange={(e: SelectChangeEvent) =>
+                  handleLanguageChange(e.target.value as string)
+                }
+                variant="filled"
+                // keep visual outline/filled removed
+                sx={{
+                  width: "100%",
+                  // remove default background and borders of filled variant
+                  backgroundColor: "transparent",
+                  "& .MuiSelect-select": {
+                    // very large text like screenshot
+                    fontSize: "15px",
+                    lineHeight: 1,
+                    fontWeight: 300,
+                    padding: 0,
+                    // ensure the text sits left
+                    justifyContent: "flex-start",
+                    // make color dark like screenshot
+                    color: mode === "dark" ? "#E6E9F2" : "rgba(0,0,0,0.87)",
+                  },
+                  // move the icon to the right end and make it medium grey
+                  "& .MuiSvgIcon-root": {
+                    position: "absolute",
+                    right: 0,
+                    top: "20%",
+                    transform: "translateY(-50%)",
+                    fontSize: 20,
+                    color: mode === "dark" ? "rgba(230,233,242,0.7)" : "rgba(0,0,0,0.54)",
+                  },
+                  // remove underline/underline effects
+                  "&:before, &:after": {
+                    display: "none",
+                  },
+                }}
+                // keep menu aligned with select
+                MenuProps={{
+                  PaperProps: {
+                    sx: { mt: 1 },
+                  },
+                }}
+                // ensure select does not show a filled background
+                disableUnderline
+              >
+                <MenuItem value="en">English</MenuItem>
+                <MenuItem value="fa">فارسی</MenuItem>
+              </Select>
+            </Box>
+          </Box>
         </Box>
 
         {/* Right Side - Weather Illustration */}
@@ -177,7 +253,7 @@ const Login: React.FC = () => {
               mode === "dark"
                 ? "#151D32"
                 : mode === "light"
-                ? "#e3f2fd"
+                ? "#e9f2f8"
                 : muiTheme.palette.background.default,
           }}
         >
